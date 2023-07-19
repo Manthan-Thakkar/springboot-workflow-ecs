@@ -34,3 +34,8 @@ jobs:
         docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
 
 
+
+
+
+
+
