@@ -1,6 +1,6 @@
-name: JavaPushImgPushCICD-Manual
+name: JavaPushImgPushCICD-Auto
 on:
-  pull_request:
+  push:
 env:
   ECR_REPOSITORY : java-app
 jobs:
