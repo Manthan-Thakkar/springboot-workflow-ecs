@@ -1,4 +1,4 @@
-name: JavaPushImgPushCICD
+name: JavaPushImgPushCICD-Manual
 on:
   workflow_dispatch:
     inputs:
@@ -6,6 +6,7 @@ on:
         description: 'Image_tag'
         required: true
         type: string
+  push:
 env:
   ECR_REPOSITORY : java-app
 jobs:
