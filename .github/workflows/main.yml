@@ -1,8 +1,11 @@
-name: JavaPushImgPushCICD
+name: JavaPushImgPushCICD-Manual
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      Image_tag:
+        description: 'Image_tag'
+        required: true
+        type: string
 env:
   ECR_REPOSITORY : java-app
 jobs:
@@ -32,6 +35,10 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
         docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
-        
-        
-        
+
+
+
+
+
+
+

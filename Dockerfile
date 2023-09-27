@@ -4,3 +4,5 @@ COPY . .
 RUN mvn clean install
 EXPOSE 8080
 ENTRYPOINT ["sh","entrypoint.sh"]
+
+
