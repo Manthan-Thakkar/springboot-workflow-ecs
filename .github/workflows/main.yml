@@ -1,11 +1,6 @@
 name: JavaPushImgPushCICD-Manual
 on:
-  workflow_dispatch:
-    inputs:
-      Image_tag:
-        description: 'Image_tag'
-        required: true
-        type: string
+  pull_request:
 env:
   ECR_REPOSITORY : java-app
 jobs:
