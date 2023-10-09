@@ -1,42 +1,67 @@
-name: JavaPushImgPushCICD-Auto
+name: Stage Deployment
+
 on:
   push:
-env:
-  ECR_REPOSITORY : java-app
+    branches: [ "master", "HFD-120"]
+    
+
 jobs:
   build:
-    name: Build-Deploy
     runs-on: ubuntu-latest
+    environment: staging
     steps:
-    - name: Checkout repository
+    - name: Checkout 
       uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.MKT }}
-    #- name: Checkout submodules
-    #  run: git submodule update --init --recursive
     - name: Configure AWS Creds
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
         aws-region: us-east-1
     - name: Login to Amazon ECR
-    
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    - name: Build, tag, and push image to Amazon ECR
-      id: Docker-Build-tag-and-push-image-to-AmazonECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: latest
+    - name: npm pre-build
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
-        docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
-
-
-
-
-
-
-
+        npm install -g mocha
+        npm ci
+        npm run lint  
+        npm run test 
+    - name: npm build
+      run: npm run build
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
+      run: |
+        docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $ECR_PATH/$REPOSITORY_NAME:$IMAGE_TAG .
+        docker push $ECR_PATH/$REPOSITORY_NAME:$IMAGE_TAG
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      CLUSTER_NAME: "hakkiri-stage"
+      TASKDEF_NAME: "hakkiri-insights"
+      SERVICE_NAME: "hakkiri-insights"
+    steps:
+    - name: Configure AWS Creds
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: us-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+    - name: Deploy New Task Defination to ECS
+    	env:
+      	IMAGE_NAME: $(echo ${{ github.sha }} | cut -c 1-8)
+      run: |
+          aws ecs describe-task-definition --task-definition $TASKDEF_NAME > task-def.json
+          jq .taskDefinition task-def.json > taskdefinition.json
+          jq 'del(.taskDefinitionArn)' taskdefinition.json | jq 'del(.revision)' | jq 'del(.status)' | jq 'del(.requiresAttributes)' | jq 'del(.compatibilities)' | jq 'del(.registeredAt)'| jq 'del(.registeredBy)' > container-definition.json
+          jq '.containerDefinitions[0].image = "$ECR_PATH/$REPOSITORY_NAME:$IMAGE_TAG"' container-definition.json > temp-taskdef.json
+          ls
+          cat temp-taskdef.json
+          aws ecs register-task-definition --cli-input-json file://temp-taskdef.json
+          aws ecs update-service --cluster  $CLUSTER_NAME --service  $SERVICE_NAME --task-definition  $TASKDEF_NAME
