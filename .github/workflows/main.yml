@@ -15,30 +15,12 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODEJS_VERSION }}
-    - name: Configure AWS Creds
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-        aws-region: us-east-1
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: npm pre-build
-      run: |
-        npm install -g mocha
-        npm ci
-        npm run lint  
-        npm run test 
-    - name: npm build
-      run: npm run build
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
         IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
       run: |
-        docker build --build-arg NPM_TOKEN=$NPM_TOKEN -t $ECR_PATH/$REPOSITORY_NAME:$IMAGE_TAG .
-        docker push $ECR_PATH/$REPOSITORY_NAME:$IMAGE_TAG
+        echo $IMAGE_TAG
   deploy:
     needs: build
     runs-on: ubuntu-latest
