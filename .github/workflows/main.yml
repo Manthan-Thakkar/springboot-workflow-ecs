@@ -53,6 +53,7 @@ jobs:
         aws-region: us-east-1
     - name: Login to Amazon ECR
       id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
     - name: Deploy New Task Defination to ECS
       env:
         IMAGE_NAME: $(echo ${{ github.sha }} | cut -c 1-8)
