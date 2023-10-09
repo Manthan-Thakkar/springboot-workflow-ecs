@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: Checkout 
       uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODEJS_VERSION }}
     - name: Configure AWS Creds
       uses: aws-actions/configure-aws-credentials@v2
       with:
