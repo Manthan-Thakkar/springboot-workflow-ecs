@@ -2,7 +2,7 @@ name: Stage Deployment
 
 on:
   push:
-    branches: [ "master", "HFD-120"]
+    branches: [ "main", "HFD-120"]
     
 
 jobs:
