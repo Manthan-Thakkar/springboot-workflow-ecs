@@ -54,8 +54,8 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
     - name: Deploy New Task Defination to ECS
-    	env:
-      	IMAGE_NAME: $(echo ${{ github.sha }} | cut -c 1-8)
+      env:
+        IMAGE_NAME: $(echo ${{ github.sha }} | cut -c 1-8)
       run: |
           aws ecs describe-task-definition --task-definition $TASKDEF_NAME > task-def.json
           jq .taskDefinition task-def.json > taskdefinition.json
