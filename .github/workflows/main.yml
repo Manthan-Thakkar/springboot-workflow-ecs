@@ -5,6 +5,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
     environment: staging
     steps:
     - name: Checkout 
@@ -14,8 +16,6 @@ jobs:
         node-version: ${{ env.NODEJS_VERSION }}
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
-      env:
-        IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
       run: |
         echo $IMAGE_TAG
   deploy:
