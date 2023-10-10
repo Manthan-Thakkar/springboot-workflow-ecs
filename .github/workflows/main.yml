@@ -1,10 +1,8 @@
 name: Stage Deployment
 
 on:
-  push:
-    branches: [ "main", "HFD-120"]
-    
-
+  schedule:
+    - cron: "5 * * * *"
 jobs:
   build:
     runs-on: ubuntu-latest
