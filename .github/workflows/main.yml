@@ -2,7 +2,7 @@ name: Stage Deployment
 
 on:
   schedule:
-    - cron: '43 10 * * *'
+    - cron: '44 10 * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
