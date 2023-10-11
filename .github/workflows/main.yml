@@ -11,15 +11,17 @@ jobs:
     steps:
     - name: Checkout 
       uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODEJS_VERSION }}
+    # - uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODEJS_VERSION }}
     - name: Short SHA
       run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       run: |
         echo $IMAGE_TAG
+        node -v
+        npm -v
   deploy:
     needs: build
     runs-on: ubuntu-latest
