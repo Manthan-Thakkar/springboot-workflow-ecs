@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    if: contains('["kingthorin","lpoulter"]', github.actor)
+    if: contains('["manthan","lpoulter"]', github.actor)
     runs-on: ubuntu-latest
     env:
       IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
