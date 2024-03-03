@@ -25,3 +25,9 @@ jobs:
         npm -v
         curl https://api.ipify.org/
         env
+    - name: Get Latest Release
+      id: latest_version
+      uses: abatilo/release-info-action@v1.3.3
+      with:
+        owner: Manthan-Thakkar
+        repo: springboot-workflow-ecs
