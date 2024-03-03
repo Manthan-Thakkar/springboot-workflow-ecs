@@ -24,3 +24,4 @@ jobs:
         node -v
         npm -v
         curl https://api.ipify.org/
+        env
