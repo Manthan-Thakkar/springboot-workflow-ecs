@@ -6,6 +6,8 @@ jobs:
   build:
     if: contains('["Manthan-Thakkar","lpoulter"]', github.actor)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       IMAGE_TAG: $(echo ${{ github.sha }} | cut -c 1-8)
     environment: staging
