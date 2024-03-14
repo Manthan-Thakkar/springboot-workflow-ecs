@@ -21,7 +21,7 @@ jobs:
       run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
     - name: get releases
       run: |
-        mkdir hello_world
+        mkdir /hello_world
         touch hello_world/manthan.txt
         ls hello_world
         ls -a hello_world
