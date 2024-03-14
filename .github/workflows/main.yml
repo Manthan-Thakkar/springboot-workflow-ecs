@@ -21,6 +21,9 @@ jobs:
       run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
     - name: get releases
       run: |
+        mkdir hello_world
+        touch hello_world/manthan.txt
+        ls hello_world
         chmod +x get_release.sh
         ./get_release.sh
     - name: Build, tag, and push image to Amazon ECR
