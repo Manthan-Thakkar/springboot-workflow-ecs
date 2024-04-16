@@ -1,10 +1,10 @@
 name: Stage Deployment
 
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 jobs:
   build:
-    if: contains('["Manthan-Thakkar","lpoulter"]', github.actor)
     runs-on: ubuntu-latest
     permissions:
       contents: read
